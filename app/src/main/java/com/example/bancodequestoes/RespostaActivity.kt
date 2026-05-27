@@ -22,7 +22,7 @@ class RespostaActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Recuperação dos valores enviados pela MainActivity
+        // Recuperação segura dos valores enviados pela MainActivity
         val pergunta = intent.getStringExtra("pergunta") ?: ""
         val resposta = intent.getStringExtra("resposta") ?: ""
         val tag = intent.getStringExtra("tag") ?: ""
@@ -44,18 +44,21 @@ class RespostaActivity : ComponentActivity() {
                         tag = tag,
                         listaQuestoes = listaQuestoes,
                         onConfirmar = {
-                            // Grava efetivamente no SQLite nativo
-                            val sucesso = dbHelper.addQuestao(pergunta, resposta, tag)
-                            if (sucesso) {
-                                Toast.makeText(this, "Questão gravada!", Toast.LENGTH_SHORT).show()
-                                // Atualiza a lista no ecrã de forma dinâmica
-                                listaQuestoes = dbHelper.getAllQuestoes()
-                            } else {
-                                Toast.makeText(this, "Erro ao gravar no banco.", Toast.LENGTH_SHORT).show()
+                            if (pergunta.isNotEmpty() && resposta.isNotEmpty()) {
+                                // Grava efetivamente no SQLite nativo
+                                val sucesso = dbHelper.addQuestao(pergunta, resposta, tag)
+                                if (sucesso) {
+                                    Toast.makeText(this, "Questão gravada com sucesso!", Toast.LENGTH_SHORT).show()
+
+                                    // Conforme a página 18 do PDF: fecha a Activity atual e volta para a MainActivity
+                                    finish()
+                                } else {
+                                    Toast.makeText(this, "Erro ao gravar no banco.", Toast.LENGTH_SHORT).show()
+                                }
                             }
                         },
                         onVoltar = {
-                            finish() // Executa o encerramento da Atividade retornando à MainActivity
+                            finish() // Retorna à MainActivity sem salvar
                         }
                     )
                 }
@@ -74,8 +77,6 @@ fun TelaConfirmacao(
     onConfirmar: () -> Unit,
     onVoltar: () -> Unit
 ) {
-    var ativo by remember { mutableStateOf(true) }
-
     Scaffold(
         topBar = { TopAppBar(title = { Text("Confirmar e Listar") }) }
     ) { paddingValues ->
@@ -109,11 +110,7 @@ fun TelaConfirmacao(
                     Text("Voltar")
                 }
                 Button(
-                    onClick = {
-                        onConfirmar()
-                        ativo = false // Desativa o botão para evitar duplicações acidentais
-                    },
-                    enabled = ativo,
+                    onClick = onConfirmar, // Aciona o método seguro que persistirá e fechará a tela
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Gravar no Banco")
