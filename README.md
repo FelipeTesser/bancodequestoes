@@ -10,7 +10,11 @@ O projeto baseou-se nas diretrizes de arquitetura multi-atividades e controle de
 
 Abaixo estão as capturas de tela demonstrando o fluxo operacional e o design responsivo construído em Material Design 3 com o Jetpack Compose:
 
-*Figura 1: Tela de inserção de dados (MainActivity) à esquerda; Tela de validação e exibição dos registros armazenados no SQLite Nativo (RespostaActivity) à direita.*
+![Tela de inserção de dados (MainActivity)](img/print1.png)
+*Figura 1: Tela de inserção de dados (MainActivity).*
+
+![Tela de validação e exibição (RespostaActivity)](img/print2.png)
+*Figura 2: Tela de validação e exibição dos registros armazenados no SQLite Nativo (RespostaActivity).*
 
 ---
 
